@@ -16,10 +16,10 @@ Every probability distribution implements the `Distribution<T>` trait with the f
 ```rust
 pub trait Distribution<T> {
     /// Draw a single value using the provided RNG
-    fn sample_one<R: rand::RngCore + ?Sized>(&self, rng: &mut R) -> T;
+    fn sample<R: rand::RngCore + ?Sized>(&self, rng: &mut R) -> T;
     
     /// Draw elements with specified shape and return a DTensor (or Vec<T>)
-    fn sample_shape<R: rand::RngCore + ?Sized>(&self, rng: &mut R, shape: &[usize]) -> DTensor;
+    fn sample_tensor<R: rand::RngCore + ?Sized>(&self, rng: &mut R, shape: &[usize]) -> DTensor;
     
     /// Adapt sampling to a DTensor template (copy dtype/shape)
     fn sample_from_template<R: rand::RngCore + ?Sized>(
@@ -42,35 +42,25 @@ impl Generator {
     
     pub fn seed(&mut self, seed: u64) { ... }
     
-    pub fn random<D: Distribution>(
-        &mut self, 
-        dist: &D, 
-        shape: &[usize]
-    ) -> Result<DTensor, RandomError> { ... }
-    
-    // High-level utilities
-    pub fn rand(&mut self, shape: &[usize]) -> DTensor { 
-        /* UNIFORM 0..1 float64 */ 
-    }
-    
-    pub fn randn(&mut self, shape: &[usize]) -> DTensor { 
-        /* Gaussian distribution */ 
-    }
-    
-    pub fn randint(
-        &mut self, 
-        low: isize, 
-        high: isize, 
-        shape: &[usize]
-    ) -> Result<DTensor, RandomError> { ... }
-    
     pub fn randchoice<T: Clone>(
         &mut self, 
         items: &[T], 
-        shape: &[usize], 
-        replace: bool, 
-        p: Option<&[f64]>
+        shape: &[usize]
     ) -> Result<DTensor, RandomError> { ... }
+
+    pub fn shuffle<T>(&mut self, arr: &mut DTensor<T, _>) {
+        // Fisher-Yates shuffle implementation
+    }
+    
+    /// Create a new shuffled copy without modifying the original
+    pub fn permutation<T: Clone>(&mut self, arr: &mut DTensor<T, _>) -> DTensor<T, _> {
+        // Clone and shuffle
+    }
+    
+    /// Generate a random permutation of indices 0..n
+    pub fn permutation_indices(&mut self, n: usize) -> Vec<usize> {
+        // Generate [0,1,2,...,n-1] then shuffle
+    }
 }
 ```
 
