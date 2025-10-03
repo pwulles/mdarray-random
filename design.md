@@ -48,6 +48,10 @@ impl Generator {
         shape: &[usize]
     ) -> Result<DTensor, RandomError> { ... }
 
+    pub fn rand_get(arr: &DTensor<T, _>) -> T {
+        // Return a random element of the tensor
+    }
+
     pub fn shuffle<T>(&mut self, arr: &mut DTensor<T, _>) {
         // Fisher-Yates shuffle implementation
     }
